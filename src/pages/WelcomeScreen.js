@@ -2,6 +2,9 @@ import Login from "./Login";
 import SignUp from "./SignUp";
 import {BrowserRouter, Link, Route, Switch} from "react-router-dom";
 import PlayGame from "./PlayGame";
+import OneToOneChess from "./OneToOneChess";
+import PlayerVsComputer from "./PlayerVsComputer";
+import RoutesList from "../RoutesList";
 
 export default function WelcomeScreen(){
     return (
@@ -14,13 +17,13 @@ export default function WelcomeScreen(){
                             <div className="collapse navbar-collapse" id="navbarTogglerDemo02">
                                 <ul className="navbar-nav ml-auto">
                                     <li className="nav-item">
-                                        <Link className="nav-link" to={"/sign-in"}>Login</Link>
+                                        <Link className="nav-link" to={RoutesList.login}>Login</Link>
                                     </li>
                                     <li className="nav-item">
-                                        <Link className="nav-link" to={"/sign-up"}>Sign up</Link>
+                                        <Link className="nav-link" to={RoutesList.signup}>Sign up</Link>
                                     </li>
                                <li className="nav-item">
-                                        <Link className="nav-link" to={"/playgame"}>Play</Link>
+                                        <Link className="nav-link" to={RoutesList.playgame}>Play</Link>
                                     </li>
                                 </ul>
                             </div>
@@ -28,9 +31,11 @@ export default function WelcomeScreen(){
                     </nav>
                             <Switch>
                                 <Route exact path='/' component={Login} />
-                                <Route path="/sign-in" component={Login} />
-                                <Route path="/sign-up" component={SignUp} />
-                                <Route path="/playgame" component={PlayGame} />
+                                <Route path={RoutesList.login} component={Login} />
+                                <Route path={RoutesList.signup} component={SignUp} />
+                                <Route path={RoutesList.playgame} component={PlayGame} />
+                                <Route path={RoutesList.onevsone} component={OneToOneChess} />
+                                <Route path={RoutesList.playervscomputer} component={PlayerVsComputer} />
                             </Switch>
 
                 </div>

@@ -1,6 +1,8 @@
 import React from "react";
 import OnevsOne from '../assets/images/1v1.jpg';
 import VsComputer from '../assets/images/vsComputer.jpg';
+import {Link} from "react-router-dom";
+import RoutesList from "../RoutesList";
 
 export default function PlayGame() {
 
@@ -13,7 +15,9 @@ export default function PlayGame() {
                     <div className="card-body">
                         <h5 className="card-title">Versus Mode</h5>
                         <p className="card-text">Play against your friend online</p>
-                        <a href="#" className="btn btn-primary">Play Online</a>
+                        <Link to={RoutesList.onevsone}>
+                        <a className="btn btn-primary">Play Online</a>
+                        </Link>
                     </div>
                 </div>
                 <div className="card" style={{width: "18rem"}}>
@@ -21,7 +25,9 @@ export default function PlayGame() {
                     <div className="card-body">
                         <h5 className="card-title">Computer Mode</h5>
                         <p className="card-text">Play against computer</p>
-                        <a href="#" className="btn btn-primary">Play with Computer</a>
+                        <Link to={RoutesList.playervscomputer}>
+                        <a className="btn btn-primary">Play with Computer</a>
+                        </Link>
                     </div>
                 </div>
             </div>
