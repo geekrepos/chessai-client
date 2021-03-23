@@ -15,40 +15,18 @@ function PVC({children, setGameContext, whenPieceMoved, onGameOver}){
         setGame(new Chess());
     }, []);
 
-    const makeComputerMove = () => {
-        MoveCalculation(null, null, onGameOver).makeBestMove({...game, ugly_move: function(move_obj, options) {
-                var pretty_move = game.make_pretty(move_obj);
-                game.make_move(move_obj);
 
-                return pretty_move;
-            }}, currentPosition);
-        // let possibleMoves = game.moves();
-        //
-        // // exit if the game is over
-        // if (
-        //     game.game_over() === true ||
-        //     game.in_draw() === true ||
-        //     possibleMoves.length === 0
-        // )
-        //     return;
-        //
-        // let randomIndex = Math.floor(Math.random() * possibleMoves.length);
-        // game.move(possibleMoves[randomIndex]);
-        // setFen(game.fen());
-        // setSquareStyles({
-        //     [game.history({ verbose: true })[game.history().length - 1].to]: {
-        //         backgroundColor: 'DarkTurquoise'
-        //     }
-        // })
+
+    const makeComputerMove = () => {
+        MoveCalculation(null, null, onGameOver).makeBestMove(game, setFen);
         whenPieceMoved(game.history({verbose: true}));
     };
 
     const onDrop = ({ sourceSquare, targetSquare }) => {
-        // see if the move is legal
         var move = game.move({
             from: sourceSquare,
             to: targetSquare,
-            promotion: 'q' // always promote to a queen for example simplicity
+            promotion: 'q'
         });
 
         // illegal move
@@ -82,7 +60,6 @@ function PVC({children, setGameContext, whenPieceMoved, onGameOver}){
             calcWidth={({ screenWidth }) => (screenWidth < 500 ? 350 : 480)}
             id="humanVsComputer"
             position={fen}
-            getPosition={setCurrentPosition}
             onDrop={(e)=>onDrop(e) && console.log(e) }
             boardStyle={{
                 borderRadius: '5px',
@@ -94,28 +71,31 @@ function PVC({children, setGameContext, whenPieceMoved, onGameOver}){
     );
 }
 
-export default function PlayerVsComputer({user= 'Avinash'}) {
+export default function PlayerVsComputer({user= 'Nitin'}) {
+    const [playerColor, setPlayerColor] = useState('green');
+    const [computerColor, setComputerColor] = useState('red');
     const [movesList, setMovesList] = useState([]);
-    const [gameContext, setGameContext] = useState(null);
-    const [currentPosition, setCurrentPosition] = useState(null);
     return (
         <div style={{display: 'flex'}}>
-        <div style={{ backgroundColor: 'white', padding: 20, borderRadius: 10}}>
-            <h5 style={{color: "green"}}>{user} <span style={{color: 'black'}}>V/s</span> <span style={{color: 'red'}}>Computer</span></h5>
-            <PVC whenPieceMoved={setMovesList} computer={MoveCalculation}>
+            <div style={{ backgroundColor: 'white', padding: 20, borderRadius: 10}}>
+                <h5 style={{color: playerColor}}>{user} <span style={{color: 'black'}}>V/s</span> <span style={{color: computerColor}}>Computer</span></h5>
+                <PVC whenPieceMoved={setMovesList} onGameOver={()=>alert("Game Over!")}>
 
-            </PVC>
-        </div>
-        <div style={{ marginLeft: 10, backgroundColor: 'white', padding: 20, borderRadius: 10}}>
-            <h4>Moves List</h4>
-            <hr/>
-            <ul>
-                {movesList.map(m=>(
-                    <li>{m.color=="w"?user:"Computer"}: {m.from} -> {m.to}</li>
-                ))}
-            {/*{movesList?.map(m=><li>{m}</li>)}*/}
-            </ul>
-        </div>
+                </PVC>
+            </div>
+            <div style={{display: 'flex', flexDirection: 'column', height: 552,  minWidth: '40%', marginLeft: 10, backgroundColor: 'white', padding: 20, borderRadius: 10}}>
+                <h4 style={{}}>Moves List</h4>
+                {/*<hr/>*/}
+                <div style={{ overflowY: 'auto', flexGrow:1}}>
+                {/*<ul>*/}
+                    {movesList.map(m=>(
+                        <div><span style={{color: m.color=="w"?playerColor:computerColor}}>{m.color=="w"?user:"Computer"}</span>: {m.from} -> {m.to}</div>
+                    ))}
+                    {/*{new Array(20).fill(null).map(h=><div>hello</div>)}*/}
+                {/*{movesList?.map(m=><li>{m}</li>)}*/}
+                {/*</ul>*/}
+                </div>
+            </div>
         </div>
     );
 }
