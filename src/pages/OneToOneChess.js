@@ -98,7 +98,7 @@ function PVC({gameId, color, children, setGameContext, whenPieceMoved, onGameOve
 
 const OneToOneChess = (props) => {
 
-    const domainName = 'http://chesswithfriend.com'
+    const domainName = "http://localhost:3000"
     const color = React.useContext(ColorContext)
     const {gameid} = useParams()
     const [opponentSocketId, setOpponentSocketId] = React.useState('')
@@ -131,7 +131,7 @@ const OneToOneChess = (props) => {
 
 
         socket.on('start game', (opponentUserName) => {
-            console.log("chessGameStarted");
+            console.log("chessGameStarted")
             if (opponentUserName !== props.userName) {
                 setUserName(opponentUserName)
                 didJoinGame(true)

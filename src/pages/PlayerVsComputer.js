@@ -2,6 +2,7 @@ import {useState, useEffect} from 'react';
 import Chess from 'chess.js';
 import Chessboard from "../src/Chessboard";
 import MoveCalculation from "../models/MoveCalculation";
+import {useSelector} from "react-redux";
 
 const $ = window.$;
 
@@ -74,7 +75,8 @@ function PVC({children, setGameContext, whenPieceMoved, onGameOver}) {
     );
 }
 
-export default function PlayerVsComputer({user = 'Nitin'}) {
+export default function PlayerVsComputer() {
+    const user = useSelector(state=>state.userReducer.username);
     const [playerColor, setPlayerColor] = useState('green');
     const [computerColor, setComputerColor] = useState('red');
     const [movesList, setMovesList] = useState([]);

@@ -1,6 +1,6 @@
 import io from 'socket.io-client'
 
-const URL = 'http://localhost:9999'
+const URL = 'http://localhost:50000'
 
 // register preliminary event listeners here:
 const socket = io(URL)
