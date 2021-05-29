@@ -1,7 +1,7 @@
 const RoutesList = {
     login: '/login',
     signup: '/signup',
-    onevsone: '/onevsone',
+    onevsone: '/game/:gameid',
     playervscomputer: "/playervscomputer",
     playgame: "/playgame",
 }
