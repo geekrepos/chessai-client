@@ -14,51 +14,50 @@ function PVC({gameId, color, children, setGameContext, whenPieceMoved, onGameOve
     const [currentPosition, setCurrentPosition] = useState(() => {
     });
 
-    console.log("color"+color);
     useEffect(() => {
         setGame(new Chess());
 
         socket.on('opponent move', move => {
+            if(!game) setGame(new Chess(move.fen));
+            console.log("onOpponentMove");
             // move == [pieceId, finalPosition]
             // console.log("opponenet's move: " + move.selectedId + ", " + move.finalPosition)
-            console.log(move);
             if (move.playerColorThatJustMovedIsWhite !== color) {
-                // this.movePiece(move.selectedId, move.finalPosition, this.state.gameState, false)
-                // this.setState({
-                //     playerTurnToMoveIsWhite: !move.playerColorThatJustMovedIsWhite
-                // })
+                // debugger
+                // console.log(move, Object.keys(game));
+            console.log(color + " just moved")
+                if(game){
+                    game.move(move.move);
+                    // game.fen(move.fen)
+                };
+                setFen(move.fen);
+                // whenPieceMoved(game.history({verbose: true}));
             }
         })
     }, []);
 
-
-    const makeComputerMove = () => {
-        MoveCalculation(null, null, onGameOver).makeBestMove(game, setFen);
-        whenPieceMoved(game.history({verbose: true}));
-    };
-
     const onDrop = ({sourceSquare, targetSquare}) => {
-        var move = game.move({
+
+        let move = {
             from: sourceSquare,
             to: targetSquare,
             promotion: 'q'
-        });
+        };
+        var moved = game.move(move);
 
         // illegal move
-        if (move === null) return;
+        if (moved === null) return;
 
         setFen(game.fen());
         whenPieceMoved(game.history({verbose: true}));
 
         socket.emit('new move', {
-            nextPlayerColorToMove: color,
+            nextPlayerColorToMove: !color,
             playerColorThatJustMovedIsWhite: color,
-            selectedId: 4,
-            finalPosition: 4,
-            gameId: gameId
+            gameId: gameId,
+            move: move,
+            fen: game.fen()
         })
-        //
-        // window.setTimeout(makeComputerMove, 1000);
     };
 
     const onSquareClick = square => {
@@ -77,11 +76,12 @@ function PVC({gameId, color, children, setGameContext, whenPieceMoved, onGameOve
         setFen(game.fen());
         whenPieceMoved(game.history({verbose: true}));
         // window.setTimeout(makeComputerMove, 1000);
-    };
+    }
 
     return (
         <Chessboard
             calcWidth={({screenWidth}) => (screenWidth < 500 ? 350 : 480)}
+            showErrors={console}
             id="humanVsComputer"
             position={fen}
             onDrop={(e) => onDrop(e) && console.log(e)}
@@ -91,11 +91,12 @@ function PVC({gameId, color, children, setGameContext, whenPieceMoved, onGameOve
             }}
             onSquareClick={onSquareClick}
             squareStyles={squareStyles}
+            orientation={ color ? 'white' : 'black'}
         />
     );
 }
 
-function OneToOneChess(props) {
+const OneToOneChess = (props) => {
 
     const domainName = 'http://chesswithfriend.com'
     const color = React.useContext(ColorContext)
@@ -111,6 +112,7 @@ function OneToOneChess(props) {
     React.useEffect(() => {
         console.log(mySocketId)
         socket.on("playerJoinedRoom", statusUpdate => {
+            console.log("playerJoinedRoom called");
             console.log("A new player has joined the room! Username: " + statusUpdate.userName + ", Game id: " + statusUpdate.gameId + " Socket id: " + statusUpdate.mySocketId)
             if (socket.id !== statusUpdate.mySocketId) {
                 setOpponentSocketId(statusUpdate.mySocketId)
@@ -119,6 +121,7 @@ function OneToOneChess(props) {
 
 
         socket.on("status", statusUpdate => {
+            console.log("chessStatusUpdate");
             console.log(statusUpdate)
             alert(statusUpdate)
             if (statusUpdate === 'This game session does not exist.' || statusUpdate === 'There are already 2 people playing in this room.') {
@@ -128,7 +131,7 @@ function OneToOneChess(props) {
 
 
         socket.on('start game', (opponentUserName) => {
-            console.log("START!")
+            console.log("chessGameStarted");
             if (opponentUserName !== props.userName) {
                 setUserName(opponentUserName)
                 didJoinGame(true)
@@ -142,6 +145,7 @@ function OneToOneChess(props) {
 
 
         socket.on('give userName', (socketId) => {
+            console.log("settingChessUsername");
             if (socket.id !== socketId) {
                 console.log("give userName stage: " + props.userName)
                 socket.emit('recieved userName', {userName: props.userName, gameId: gameid})
@@ -149,6 +153,7 @@ function OneToOneChess(props) {
         })
 
         socket.on('get Opponent UserName', (data) => {
+            console.log("settingChessOpponentName");
             if (socket.id !== data.socketId) {
                 setUserName(data.userName)
                 console.log('data.socketId: data.socketId')
@@ -157,8 +162,6 @@ function OneToOneChess(props) {
             }
         })
     }, [mySocketId])
-
-    console.log(gameSessionDoesNotExist)
 
     return (
         <React.Fragment>
