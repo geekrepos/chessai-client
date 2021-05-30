@@ -91,9 +91,8 @@ export default function WelcomeScreen() {
                             <Route path={RoutesList.login} component={Login}/>
                             <Route path={RoutesList.signup} component={SignUp}/>
                             <>
-                            <Route path ={RoutesList.playgame}  private={true} component={<PlayGame setUserName={()=>{}}/>}/>
+                            <Route path ={RoutesList.playgame}  private={true} component={()=><PlayGame setUserName={()=>{}}/>}/>
                                 {/*<PlayGame setUserName = {setUserName}/>*/}
-                            </Route>
 
                             <Route path={RoutesList.onevsone}  private={true}>
                                 {
